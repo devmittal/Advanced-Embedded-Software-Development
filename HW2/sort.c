@@ -1,6 +1,6 @@
 /******************************************************************************************
  *@file: sort.c
- *@brief: This program executes adds a system call which sorts an array of numbers.
+ *@brief: This program adds a system call which sorts an array of numbers.
  *@tools_used: Compiler: arm-linux-gcc. Program run on BeagleBone Green
  *@author: Devansh Mittal
  *@date: 02/10/2019
