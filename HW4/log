@@ -1,0 +1,21 @@
+Currently in Child Thread 1
+Child 1 ID140455853238016
+Child 1 PID1825Currently in Child Thread 1
+Child 1 ID139665887794944
+Child 1 PID1871
+Child 1 TID1872Currently in Child Thread 1
+Child 1 ID139997844522752
+Child 1 PID1899
+Child 1 TID1900Currently in Master thread
+Master ID139997853030208
+Master PID1899
+Master TID1899Currently in Child Thread 1
+Child 1 ID139724391655168
+Child 1 PID1927
+Child 1 TID1928Currently in Child Thread 2
+Child 2 ID139724383262464
+Child 2 PID1927
+Child 2 TID1929Currently in Master thread
+Master ID139724400162624
+Master PID1927
+Master TID1927
