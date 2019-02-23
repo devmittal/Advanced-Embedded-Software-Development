@@ -1,21 +1,23 @@
+
+Currently in Child Thread 2
+Child 2 PID: 3164
+Child 2 TID: 3166
+Child 2 thread start time: 1550894518 seconds 981561 microseconds
+Child 2 thread end time: 1550894518 seconds 982224 microseconds
 Currently in Child Thread 1
-Child 1 ID140455853238016
-Child 1 PID1825Currently in Child Thread 1
-Child 1 ID139665887794944
-Child 1 PID1871
-Child 1 TID1872Currently in Child Thread 1
-Child 1 ID139997844522752
-Child 1 PID1899
-Child 1 TID1900Currently in Master thread
-Master ID139997853030208
-Master PID1899
-Master TID1899Currently in Child Thread 1
-Child 1 ID139724391655168
-Child 1 PID1927
-Child 1 TID1928Currently in Child Thread 2
-Child 2 ID139724383262464
-Child 2 PID1927
-Child 2 TID1929Currently in Master thread
-Master ID139724400162624
-Master PID1927
-Master TID1927
+Child 1 PID: 3164
+Child 1 TID: 3165
+Child 1 thread start time: 1550894518 seconds 981553 microseconds
+
+Following characters have less than 100 occurrences:
+j --> 26
+q --> 4
+x --> 84
+z --> 12
+Child 1 thread end time: 1550894518 seconds 986596 microseconds
+In Master thread
+Master PID: 3164
+Master TID: 3164
+Master thread start time: 1550894518 seconds 981422 microseconds
+Exiting Master Thread
+Master thread end time: 1550894518 seconds 986633 microseconds

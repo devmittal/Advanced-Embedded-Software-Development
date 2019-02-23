@@ -1,0 +1,17 @@
+
+Currently in Child Thread 2
+Child 2 PID: 2362
+Child 2 TID: 2364
+Child 2 thread start time: 1550887433 seconds 584886 microseconds
+Child 2 thread end time: 1550887433 seconds 584897 microseconds
+Currently in Child Thread 1
+Child 1 PID: 2362
+Child 1 TID: 2363
+Child 1 thread start time: 1550887433 seconds 584798 microseconds
+Child 1 thread end time: 1550887433 seconds 584842 microseconds
+In Master thread
+Master PID: 2362
+Master TID: 2362
+Master thread start time: 1550887433 seconds 584636 microseconds
+Exiting Master Thread
+Master thread end time: 1550887433 seconds 585038 microseconds
