@@ -14,13 +14,13 @@ typedef struct
 {
 	char s_send[20];
 	int led_send;
-}messages_send;
+}messages_send; 
 
 typedef struct
 {
 	char s_receive[20];
-	int led_receive;
-}messages_receive;
+	char led_receive[5];
+}messages_receive; 
 
 int main()
 {
@@ -29,6 +29,7 @@ int main()
 	//char *string_pid;
 	messages_send mg_send;
 	messages_receive mg_receive;
+	char led[5];
 	//char out[20];
 	//char in[20] = {"Transmitter sending"};
 	struct timeval timestamp;
@@ -37,6 +38,7 @@ int main()
 	sprintf(mg_send.s_send,"From PID %d",getpid());
 	//strcat(mg_send.s_send,string_pid);
 	mg_send.led_send = 1;
+	sprintf(led,"%d",mg_send.led_send);
 
 	FILE *FP = fopen(FILENAME,"a");	
 	if(FP == NULL)
@@ -51,19 +53,49 @@ int main()
 	if(mkfifo(FIFONAME,0666) == -1)
 		perror("Process 1 fifo: ");
 
-	for(int i=0;i<10;i++)
-	{
-		fd = open(FIFONAME,O_WRONLY);
-		gettimeofday(&timestamp,NULL);
-		fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: %s LED Control: %d", timestamp.tv_sec, timestamp.tv_usec, mg_send.s_send, mg_send.led_send);
-		write(fd,&mg_send,sizeof(mg_send));
-		close(fd);
+	fd = open(FIFONAME,O_WRONLY);
+	gettimeofday(&timestamp,NULL);
+	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,
+			 timestamp.tv_usec, mg_send.s_send);
+	write(fd,mg_send.s_send,20);
+	//close(fd);
 
-		fd = open(FIFONAME,O_RDONLY);
-		gettimeofday(&timestamp,NULL);		
-		read(fd,&mg_receive,sizeof(mg_receive));
-		fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: %s LED Control: %d", timestamp.tv_sec, timestamp.tv_usec, mg_receive.s_receive, 				mg_receive.led_receive);
-		close(fd);
-	}
+	gettimeofday(&timestamp,NULL);
+	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: LED Controller - %d", timestamp.tv_sec,
+			 timestamp.tv_usec, mg_send.led_send);
+	write(fd,led,5);
+	close(fd);
+
+	fd = open(FIFONAME,O_RDONLY);
+	gettimeofday(&timestamp,NULL);		
+	read(fd,mg_receive.s_receive,20);
+	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
+			timestamp.tv_usec, mg_receive.s_receive);
+	
+	gettimeofday(&timestamp,NULL);		
+	read(fd,mg_receive.s_receive,20);
+	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
+			timestamp.tv_usec, mg_receive.s_receive);	
+
+	gettimeofday(&timestamp,NULL);		
+	read(fd,mg_receive.s_receive,20);
+	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
+			timestamp.tv_usec, mg_receive.s_receive);	
+
+	gettimeofday(&timestamp,NULL);		
+	read(fd,mg_receive.led_receive,5);
+	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
+			timestamp.tv_usec, mg_receive.led_receive);	
+	close(fd);
+
+	fd = open(FIFONAME,O_WRONLY);
+	gettimeofday(&timestamp,NULL);
+	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,
+			 timestamp.tv_usec, mg_send.s_send);
+	write(fd,mg_send.s_send,20);
+
+	strcpy(mg_send2.s_send2,"LED signal received");	
+	close(fd);
+
 	return 0;
 }
