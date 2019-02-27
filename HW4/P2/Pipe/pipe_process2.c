@@ -12,7 +12,7 @@
 
 typedef struct
 {
-	char s_send2[20];
+	char s_send2[40];
 	int led_send2;
 }messages_send2;
 
@@ -60,30 +60,30 @@ int main()
 
 	gettimeofday(&timestamp2,NULL);
 	read(fd1,mg_receive2.led_receive2,5);
-	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: LED Controller - %s", timestamp2.tv_sec, 
+	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: LED Signal - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.led_receive2);
 	close(fd1);
 
 	fd1 = open(FIFONAME,O_WRONLY);
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
-	write(fd1,mg_send2.s_send2,20);
+	write(fd1,mg_send2.s_send2,40);
 	
 
 	strcpy(mg_send2.s_send2,"LED signal received");
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
-	write(fd1,mg_send2.s_send2,20);
+	write(fd1,mg_send2.s_send2,40);
 
 	sprintf(mg_send2.s_send2,"From PID %d",getpid());
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
-	write(fd1,mg_send2.s_send2,20);
+	write(fd1,mg_send2.s_send2,40);
 	
 	mg_send2.led_send2 = 0;
 	sprintf(led,"%d",mg_send2.led_send2);
 	gettimeofday(&timestamp2,NULL);
-	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Control: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
+	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Signal: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
 	write(fd1,led,5);
 	close(fd1);
 
@@ -92,6 +92,24 @@ int main()
 	read(fd1,mg_receive2.s_receive2,20);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
+
+	gettimeofday(&timestamp2,NULL);		
+	read(fd1,mg_receive2.s_receive2,20);
+	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
+			timestamp2.tv_usec, mg_receive2.s_receive2);
+	
+	gettimeofday(&timestamp2,NULL);		
+	read(fd1,mg_receive2.s_receive2,20);
+	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
+			timestamp2.tv_usec, mg_receive2.s_receive2);
 	close(fd1);
+	
+	strcpy(mg_send2.s_send2,"Affirmative - Communication Ended");
+	fd1 = open(FIFONAME,O_WRONLY);
+	gettimeofday(&timestamp2,NULL);
+	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
+	write(fd1,mg_send2.s_send2,40);
+	close(fd1);
+
 	return 0;
 }
