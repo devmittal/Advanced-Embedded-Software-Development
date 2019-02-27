@@ -16,6 +16,8 @@
 
 pthread_t threads[NUM_THREADS]; //Thread descriptors
 char *name_file;
+sem_t startIOWorker;
+int flag = 0;
 
 typedef struct
 {
@@ -27,6 +29,7 @@ void thread_handler(union sigval sv)
 	char line[MAXLINE];
 	int i;	
 	char *s = sv.sival_ptr;
+
 	FILE *FP = fopen("/proc/stat", "r");
 	if(FP == NULL)
 	{
@@ -42,11 +45,12 @@ void thread_handler(union sigval sv)
 	}
 
 	fprintf(fileptr_timer,"\n\nCPU Utilization:\n");
-	for(i=0;i<3;i++)
+	for(i=0;i<2;i++)
 	{
-		fgets(line, sizeof line,FP);
+		fgets(line,sizeof line,FP);
 		fprintf(fileptr_timer,"%s",line);
 	}
+	fflush(fileptr_timer);
 }
 
 void kill_signal_handler(int signum)
@@ -60,19 +64,22 @@ void kill_signal_handler(int signum)
 		exit(1);
 	}
 
-	if(signum == 10)
+	if(signum == SIGUSR2)
 	{
 		fprintf(fileptr_kill_signal,"\n\nChild thread 1 exiting due to USR1");	
 		gettimeofday(&endTime_child_kill, 0);
 		fprintf(fileptr_kill_signal, "\nChild thread 1 end time: %lu seconds %lu microseconds", endTime_child_kill.tv_sec, endTime_child_kill.tv_usec);
+		fclose(fileptr_kill_signal);
 		pthread_cancel(threads[0]);
 	}
-	else if(signum == 12)
+	else if(signum == SIGUSR1)
 	{
+		flag = 1;
 		fprintf(fileptr_kill_signal,"\n\nChild thread 2 exiting due to USR2");
 		gettimeofday(&endTime_child_kill, 0);
 		fprintf(fileptr_kill_signal, "\nChild thread 2 end time: %lu seconds %lu microseconds", endTime_child_kill.tv_sec, endTime_child_kill.tv_usec);
-		pthread_cancel(threads[1]);
+		fclose(fileptr_kill_signal);
+		//pthread_cancel(threads[1]);
 	}
 }
 
@@ -85,11 +92,13 @@ void *childthread1(void *tinfo)
 	struct sigaction act;
 	gettimeofday(&startTime_child1, 0);
 
+	sem_wait(&(startIOWorker));
+
 	memset(&act,0,sizeof(struct sigaction));
 
 	act.sa_handler = &kill_signal_handler;
 
-	if(sigaction(SIGUSR1,&act,NULL) == -1)
+	if(sigaction(SIGUSR2,&act,NULL) == -1)
 		perror("sigaction: ");
 	thread_info *fileinfo = (thread_info *)tinfo;
 	FILE *fileptr_child1 = fopen(fileinfo->filename, "a");
@@ -102,6 +111,7 @@ void *childthread1(void *tinfo)
 	fprintf(fileptr_child1,"\nChild 1 PID: %d", getpid());
 	fprintf(fileptr_child1,"\nChild 1 TID: %ld", syscall(SYS_gettid));
 	fprintf(fileptr_child1, "\nChild 1 thread start time: %lu seconds %lu microseconds", startTime_child1.tv_sec, startTime_child1.tv_usec);
+	fflush(fileptr_child1);
 	
 	FILE *randwords = fopen("gdb.txt","r");
 	if(randwords == NULL)
@@ -125,10 +135,14 @@ void *childthread1(void *tinfo)
 		if(count[i] < 100)
 			fprintf(fileptr_child1,"\n%c --> %d",(i+97),count[i]);
 	}
+	fflush(fileptr_child1);
 
 	fprintf(fileptr_child1,"\n\nChild thread 1 exiting. Task completed");	
 	gettimeofday(&endTime_child1, 0);
 	fprintf(fileptr_child1, "\nChild 1 thread end time: %lu seconds %lu microseconds", endTime_child1.tv_sec, endTime_child1.tv_usec);
+	fflush(fileptr_child1);
+	fclose(fileptr_child1);
+	sem_post(&(startIOWorker));
 }
 
 void *childthread2(void *tinfo)
@@ -140,10 +154,12 @@ void *childthread2(void *tinfo)
 	struct sigaction act2;
 	gettimeofday(&startTime_child2, 0);
 
+	sem_wait(&(startIOWorker));
+
 	memset(&act2,0,sizeof(struct sigaction));
 
 	act2.sa_handler = &kill_signal_handler;
-	if(sigaction(SIGUSR2,&act2,NULL) == -1)
+	if(sigaction(SIGUSR1,&act2,NULL) == -1)
 		perror("sigaction: ");
 
 	thread_info *fileinfo2 = (thread_info *)tinfo;
@@ -158,6 +174,7 @@ void *childthread2(void *tinfo)
 	fprintf(fileptr_child2,"\nChild 2 PID: %d", getpid());
 	fprintf(fileptr_child2,"\nChild 2 TID: %ld", syscall(SYS_gettid));
 	fprintf(fileptr_child2, "\nChild 2 thread start time: %lu seconds %lu microseconds", startTime_child2.tv_sec, startTime_child2.tv_usec);
+	fflush(fileptr_child2);
 	
 	memset(&sev,0,sizeof(struct sigevent));
 	memset(&trigger,0,sizeof(struct itimerspec));
@@ -172,23 +189,37 @@ void *childthread2(void *tinfo)
 	trigger.it_interval.tv_nsec = 100000000;
 	if(timer_settime(timerid,0,&trigger,NULL) == -1)
 		perror("timer_settime: ");
-	sleep(100000);	
-	if(timer_delete(timerid) == -1)
-		perror("timer_delete: ");
+	while(1)
+	{
+		if(flag == 1)
+		{
+			printf("Check\n");
+			if(timer_delete(timerid) == -1)
+				perror("timer_delete: ");
+			//pthread_exit(0);
+			pthread_cancel(threads[1]);
+			//break;
+		}	
+	//	printf("Check\n");
+	}
 
 	fprintf(fileptr_child2,"\n\nChild thread 2 exiting. Task completed");
 	gettimeofday(&endTime_child2, 0);
 	fprintf(fileptr_child2, "\nChild 2 thread end time: %lu seconds %lu microseconds", endTime_child2.tv_sec, endTime_child2.tv_usec);
+	fflush(fileptr_child2);
+	fclose(fileptr_child2);
+	sem_post(&(startIOWorker));
 }
 
 int main (int argc, char *argv[])
 {
 	int i;
-	thread_info tinfo[NUM_THREADS];
+	thread_info tinfo;
 	struct timeval startTime, endTime;
 	gettimeofday(&startTime, 0);
 
-	name_file = argv[1];
+	sem_init(&(startIOWorker), 0, 1); //Initialize semaphore 1
+	name_file = argv[1]; //Global file name used only for signal handling
 
 	FILE *fileptr_main = fopen(argv[1], "a");
 	if(fileptr_main == NULL)
@@ -201,24 +232,27 @@ int main (int argc, char *argv[])
 	fprintf(fileptr_main,"\nMaster PID: %d", getpid());
 	fprintf(fileptr_main,"\nMaster TID: %ld", syscall(SYS_gettid));
 	fprintf(fileptr_main, "\nMaster thread start time: %lu seconds %lu microseconds", startTime.tv_sec, startTime.tv_usec);
+	fflush(fileptr_main);
 
-	tinfo[0].filename = argv[1];
-	tinfo[1].filename = argv[1];
+	tinfo.filename = argv[1];
 	
-	if(pthread_create(&threads[0],  (void *)0, childthread1, (void *)&(tinfo[0]))) // parameters to pass in
+	if(pthread_create(&threads[0],  (void *)0, childthread1, (void *)&(tinfo))) // parameters to pass in
 	{
 		perror("\nError! Could not create thread: ");
 		exit(1);
 	}
 
-	if(pthread_create(&threads[1],  (void *)0, childthread2, (void *)&(tinfo[1]))) // parameters to pass in
+	if(pthread_create(&threads[1],  (void *)0, childthread2, (void *)&(tinfo))) // parameters to pass in
 	{
 		perror("\nError! Could not create thread: ");
 		exit(1);
 	}
 	pthread_join(threads[0],NULL);
 	pthread_join(threads[1],NULL);
+	sem_destroy(&(startIOWorker));
 	gettimeofday(&endTime, 0);
 	fputs("\nExiting Master Thread",fileptr_main);
 	fprintf(fileptr_main, "\nMaster thread end time: %lu seconds %lu microseconds", endTime.tv_sec, endTime.tv_usec);
+	fclose(fileptr_main);
+	return 0;
 }
