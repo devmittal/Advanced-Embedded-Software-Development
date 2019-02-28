@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
 	}	
 	fprintf(FP1,"\n\nProcess 2 PID: %d",getpid());
 	fprintf(FP1,"\nUsing Sockets");
-	fprintf(FP1,"\nAllocated file descriptor: %d",fileno(FP1));
 	fflush(FP1);
 
 	socketfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -58,6 +57,8 @@ int main(int argc, char *argv[])
 		perror("Socket Creation failed: ");
 		exit(0);
 	}
+	fprintf(FP1,"\nSocket file descriptor: %d",socketfd);
+	fflush(FP1);
 
 	bzero((char *) &socket_str, sizeof(socket_str));
 	portno = atoi(argv[1]);
