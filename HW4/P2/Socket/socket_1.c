@@ -278,5 +278,6 @@ int main(int argc, char *argv[])
 	fflush(FP);
 	close(socketfd);
 
+	fclose(FP);
 	return 0;
 }

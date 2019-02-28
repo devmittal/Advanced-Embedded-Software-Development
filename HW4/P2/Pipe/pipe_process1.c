@@ -249,5 +249,7 @@ int main()
 			timestamp.tv_usec, mg_receive.s_receive);
 	fflush(FP);
 	close(fd);
+
+	fclose(FP);
 	return 0;
 }

@@ -244,5 +244,6 @@ int main()
 	fflush(FP1);
 	close(fd1);
 
+	fclose(FP1);
 	return 0;
 }
