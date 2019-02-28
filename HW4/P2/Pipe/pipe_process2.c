@@ -24,7 +24,7 @@ typedef struct
 int main()
 {
 	int fd1;
-	int i;
+	int i,n;
 	char led[5];
 	messages_send2 mg_send2;
 	messages_receive2 mg_receive2;
@@ -48,13 +48,23 @@ int main()
 			perror("Process 1 fifo: ");
 
 	fd1 = open(FIFONAME,O_RDONLY);
-	read(fd1,mg_receive2.s_receive2,20);
+	n = read(fd1,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit	(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
 	fflush(FP1);
 
-	read(fd1,mg_receive2.led_receive2,5);
+	n = read(fd1,mg_receive2.led_receive2,5);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit	(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: LED Signal - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.led_receive2);
@@ -62,40 +72,70 @@ int main()
 	close(fd1);
 
 	fd1 = open(FIFONAME,O_WRONLY);
-	write(fd1,mg_send2.s_send2,40);
+	n = write(fd1,mg_send2.s_send2,40);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit	(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
 	
 
 	strcpy(mg_send2.s_send2,"LED signal received");
-	write(fd1,mg_send2.s_send2,40);
+	n = write(fd1,mg_send2.s_send2,40);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit	(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
 
 	sprintf(mg_send2.s_send2,"From PID %d",getpid());
-	write(fd1,mg_send2.s_send2,40);
+	n = write(fd1,mg_send2.s_send2,40);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit	(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
 	
 	mg_send2.led_send2 = 0;
 	sprintf(led,"%d",mg_send2.led_send2);
-	write(fd1,led,5);
+	n = write(fd1,led,5);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit	(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Signal: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
 	fflush(FP1);
 	close(fd1);
 
 	fd1 = open(FIFONAME,O_RDONLY);
-	read(fd1,mg_receive2.s_receive2,20);
+	n = read(fd1,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
 	fflush(FP1);
 
-	read(fd1,mg_receive2.s_receive2,20);
+	n = read(fd1,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);		
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
@@ -103,14 +143,24 @@ int main()
 
 	for(i=0;i<3;i++)
 	{
-		read(fd1,mg_receive2.led_receive2,5);
+		n = read(fd1,mg_receive2.led_receive2,5);
+		if(n == -1)
+		{		
+			perror("Could not read: ");
+			exit(0);
+		}
 		gettimeofday(&timestamp2,NULL);
 		fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: LED Signal - %s", timestamp2.tv_sec, 
 				timestamp2.tv_usec, mg_receive2.led_receive2);
 		fflush(FP1);
 	}
 
-	read(fd1,mg_receive2.led_receive2,5);	
+	n = read(fd1,mg_receive2.led_receive2,5);	
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: LED Signal - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.led_receive2);
@@ -119,7 +169,12 @@ int main()
 
 	fd1 = open(FIFONAME,O_WRONLY);
 	strcpy(mg_send2.s_send2,"LED signal received");
-	write(fd1,mg_send2.s_send2,40);
+	n = write(fd1,mg_send2.s_send2,40);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
@@ -128,7 +183,12 @@ int main()
 	sprintf(led,"%d",mg_send2.led_send2);	
 	for(i=0;i<3;i++)
 	{
-		write(fd1,led,5);	
+		n = write(fd1,led,5);	
+		if(n == -1)
+		{		
+			perror("Could not read: ");
+			exit(0);
+		}
 		gettimeofday(&timestamp2,NULL);
 		fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Signal: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
 		fflush(FP1);
@@ -136,19 +196,35 @@ int main()
 
 	mg_send2.led_send2 = 0;
 	sprintf(led,"%d",mg_send2.led_send2);
-	write(fd1,led,5);
+	n = write(fd1,led,5);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Signal: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
 	fflush(FP1);
 	close(fd1);
 
 	fd1 = open(FIFONAME,O_RDONLY);
-	read(fd1,mg_receive2.s_receive2,20);
+	n = read(fd1,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);		
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
 	fflush(FP1);
-	read(fd1,mg_receive2.s_receive2,20);
+	
+	n = read(fd1,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);		
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
@@ -157,7 +233,12 @@ int main()
 	
 	strcpy(mg_send2.s_send2,"Affirmative - Communication Ended");
 	fd1 = open(FIFONAME,O_WRONLY);
-	write(fd1,mg_send2.s_send2,40);
+	n = write(fd1,mg_send2.s_send2,40);
+	if(n == -1)
+	{		
+		perror("Could not read: ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
