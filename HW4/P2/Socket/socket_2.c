@@ -69,7 +69,6 @@ int main(int argc, char *argv[])
 	if(bind(socketfd, (struct sockaddr *) &socket_str, sizeof(socket_str)) == -1)
 	{
 		perror("Binding error: ");
-		//exit(0);
 	} 
 
 	if(connect(socketfd, (struct sockaddr *) &socket_str, sizeof(socket_str)) == -1)
@@ -78,7 +77,6 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	//n = write(socketfd,buffer,256);
 	gettimeofday(&timestamp2,NULL);
 	n = read(socketfd,mg_receive2.s_receive2,20);
 	if(n == -1)
@@ -193,16 +191,6 @@ int main(int argc, char *argv[])
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
 	write(socketfd,mg_send2.s_send2,40);
-	
-
-	/*n = read(socketfd,s,20);
-	if(n == -1)
-	{
-		perror("Could not read: ");
-		exit(0);
-	}
-	printf("Message: %s\n",s);*/
-
 	close(socketfd);
 
 	return 0;

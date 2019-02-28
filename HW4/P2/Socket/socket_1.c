@@ -205,16 +205,6 @@ int main(int argc, char *argv[])
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
 			timestamp.tv_usec, mg_receive.s_receive);
 	fflush(FP);
-	
-	//printf("Message: %s\n",buffer);
-
-	//n = write(client_sockfd,"I got your message",18);
-	/*if(n == -1)
-	{
-		perror("Could not write: ");
-		exit(0);
-	}*/
-
 	close(socketfd);
 
 	return 0;
