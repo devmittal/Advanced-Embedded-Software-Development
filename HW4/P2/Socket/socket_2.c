@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}	
 	fprintf(FP1,"\n\nProcess 2 PID: %d",getpid());
-	fprintf(FP1,"\nUsing Scokets");
+	fprintf(FP1,"\nUsing Sockets");
 	fprintf(FP1,"\nAllocated file descriptor: %d",fileno(FP1));
 	fflush(FP1);
 
@@ -77,120 +77,190 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	gettimeofday(&timestamp2,NULL);
 	n = read(socketfd,mg_receive2.s_receive2,20);
 	if(n == -1)
 	{
 		perror("Could not write: ");
 		exit(0);
 	}
+	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
 	fflush(FP1);
 
-	gettimeofday(&timestamp2,NULL);
 	n = read(socketfd,mg_receive2.led_receive2,5);
 	if(n == -1)
 	{
 		perror("Could not write: ");
 		exit(0);
 	}
+	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: LED Signal - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.led_receive2);
 	fflush(FP1);
 
+	n = write(socketfd,mg_send2.s_send2,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
-	write(socketfd,mg_send2.s_send2,40);
 	
 
 	strcpy(mg_send2.s_send2,"LED signal received");
+	n = write(socketfd,mg_send2.s_send2,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
-	write(socketfd,mg_send2.s_send2,40);
 
 	sprintf(mg_send2.s_send2,"From PID %d",getpid());
+	n = write(socketfd,mg_send2.s_send2,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
-	write(socketfd,mg_send2.s_send2,40);
 	
 	mg_send2.led_send2 = 0;
 	sprintf(led,"%d",mg_send2.led_send2);
+	n = write(socketfd,led,5);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Signal: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
 	fflush(FP1);
-	write(socketfd,led,5);
 
+	n = read(socketfd,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
-	read(socketfd,mg_receive2.s_receive2,20);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
 	fflush(FP1);
 
+	n = read(socketfd,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);		
-	read(socketfd,mg_receive2.s_receive2,20);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
 	fflush(FP1);
 
 	for(i=0;i<3;i++)
 	{
+		n = read(socketfd,mg_receive2.led_receive2,5);
+		if(n == -1)
+		{
+			perror("Error Reading/Writing ");
+			exit(0);
+		}
 		gettimeofday(&timestamp2,NULL);
-		read(socketfd,mg_receive2.led_receive2,5);
 		fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: LED Signal - %s", timestamp2.tv_sec, 
 				timestamp2.tv_usec, mg_receive2.led_receive2);
 		fflush(FP1);
 	}
 
+	n = read(socketfd,mg_receive2.led_receive2,5);	
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
-	read(socketfd,mg_receive2.led_receive2,5);	
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: LED Signal - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.led_receive2);
 	fflush(FP1);
 
 	strcpy(mg_send2.s_send2,"LED signal received");
+	n = write(socketfd,mg_send2.s_send2,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
-	write(socketfd,mg_send2.s_send2,40);
 
 	mg_send2.led_send2 = 1;
 	sprintf(led,"%d",mg_send2.led_send2);	
 	for(i=0;i<3;i++)
 	{
+		n = write(socketfd,led,5);	
+		if(n == -1)
+		{
+			perror("Error Reading/Writing ");
+			exit(0);
+		}
 		gettimeofday(&timestamp2,NULL);
 		fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Signal: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
 		fflush(FP1);
-		write(socketfd,led,5);	
 	}
 
 	mg_send2.led_send2 = 0;
 	sprintf(led,"%d",mg_send2.led_send2);
+	n = write(socketfd,led,5);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Signal: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
 	fflush(FP1);
-	write(socketfd,led,5);
 
+	n = read(socketfd,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);		
-	read(socketfd,mg_receive2.s_receive2,20);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
 	fflush(FP1);
 
+	n = read(socketfd,mg_receive2.s_receive2,20);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);		
-	read(socketfd,mg_receive2.s_receive2,20);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Receiving at Process 2: Message - %s", timestamp2.tv_sec, 
 			timestamp2.tv_usec, mg_receive2.s_receive2);
 	fflush(FP1);
 
 	strcpy(mg_send2.s_send2,"Affirmative - Communication Ended");
+	n = write(socketfd,mg_send2.s_send2,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: Message: %s", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.s_send2);
 	fflush(FP1);
-	write(socketfd,mg_send2.s_send2,40);
 	close(socketfd);
 
 	return 0;

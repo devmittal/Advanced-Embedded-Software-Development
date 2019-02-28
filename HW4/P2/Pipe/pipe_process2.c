@@ -75,7 +75,7 @@ int main()
 	n = write(fd1,mg_send2.s_send2,40);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit	(0);
 	}
 	gettimeofday(&timestamp2,NULL);
@@ -87,7 +87,7 @@ int main()
 	n = write(fd1,mg_send2.s_send2,40);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit	(0);
 	}
 	gettimeofday(&timestamp2,NULL);
@@ -98,7 +98,7 @@ int main()
 	n = write(fd1,mg_send2.s_send2,40);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit	(0);
 	}
 	gettimeofday(&timestamp2,NULL);
@@ -110,8 +110,8 @@ int main()
 	n = write(fd1,led,5);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
-		exit	(0);
+		perror("Error Reading/Writing: ");
+		exit(0);
 	}
 	gettimeofday(&timestamp2,NULL);
 	fprintf(FP1,"\n\n[%lu seconds %lu microseconds] Sending from Process 2: LED Signal: %d", timestamp2.tv_sec, timestamp2.tv_usec, mg_send2.led_send2);
@@ -172,7 +172,7 @@ int main()
 	n = write(fd1,mg_send2.s_send2,40);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit(0);
 	}
 	gettimeofday(&timestamp2,NULL);
@@ -186,7 +186,7 @@ int main()
 		n = write(fd1,led,5);	
 		if(n == -1)
 		{		
-			perror("Could not read: ");
+			perror("Error Reading/Writing: ");
 			exit(0);
 		}
 		gettimeofday(&timestamp2,NULL);
@@ -199,7 +199,7 @@ int main()
 	n = write(fd1,led,5);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit(0);
 	}
 	gettimeofday(&timestamp2,NULL);
@@ -236,7 +236,7 @@ int main()
 	n = write(fd1,mg_send2.s_send2,40);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit(0);
 	}
 	gettimeofday(&timestamp2,NULL);

@@ -53,7 +53,7 @@ int main()
 	n = write(fd,mg_send.s_send,20);
 	if(n == -1)
 	{
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit(0);
 	}
 	gettimeofday(&timestamp,NULL);
@@ -64,7 +64,7 @@ int main()
 	n = write(fd,led,5);
 	if(n == -1)
 	{
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit(0);
 	}
 	gettimeofday(&timestamp,NULL);
@@ -123,7 +123,7 @@ int main()
 	n = write(fd,mg_send.s_send,20);
 	if(n == -1)
 	{
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit(0);
 	}
 	gettimeofday(&timestamp,NULL);
@@ -135,7 +135,7 @@ int main()
 	n = write(fd,mg_send.s_send,20);
 	if(n == -1)
 	{
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit(0);
 	}
 	gettimeofday(&timestamp,NULL);
@@ -150,8 +150,8 @@ int main()
 		n = write(fd,led,5);
 		if(n == -1)
 		{
-			perror("Could not read: ");
-			exit	(0);
+			perror("Error Reading/Writing: ");
+			exit(0);
 		}	
 		gettimeofday(&timestamp,NULL);
 		fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: LED Signal - %d", timestamp.tv_sec,
@@ -164,7 +164,7 @@ int main()
 	n = write(fd,led,5);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit	(0);
 	}
 	gettimeofday(&timestamp,NULL);
@@ -187,7 +187,12 @@ int main()
 
 	for(i=0;i<3;i++)
 	{
-		read(fd,mg_receive.led_receive,5);
+		n = read(fd,mg_receive.led_receive,5);
+		if(n == -1)
+		{		
+			perror("Could not read: ");
+			exit	(0);
+		}
 		gettimeofday(&timestamp,NULL);		
 		fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: LED Signal: %s", timestamp.tv_sec, 
 				timestamp.tv_usec, mg_receive.led_receive);	
@@ -211,7 +216,7 @@ int main()
 	n = write(fd,mg_send.s_send,20);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
+		perror("Error Reading/Writing: ");
 		exit	(0);
 	}
 	gettimeofday(&timestamp,NULL);
@@ -223,8 +228,8 @@ int main()
 	n = write(fd,mg_send.s_send,20);
 	if(n == -1)
 	{		
-		perror("Could not read: ");
-		exit	(0);
+		perror("Error Reading/Writing: ");
+		exit(0);
 	}
 	gettimeofday(&timestamp,NULL);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,

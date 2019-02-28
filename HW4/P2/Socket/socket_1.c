@@ -86,122 +86,191 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	//n = read(client_sockfd,buffer,256);
-	gettimeofday(&timestamp,NULL);
-	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,
-			 timestamp.tv_usec, mg_send.s_send);
-	fflush(FP);
 	n = write(client_sockfd,mg_send.s_send,20);
 	if(n == -1)
 	{
 		perror("Could not read: ");
 		exit(0);
 	}
+	gettimeofday(&timestamp,NULL);
+	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,
+			 timestamp.tv_usec, mg_send.s_send);
+	fflush(FP);
 
+	n = write(client_sockfd,led,5);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: LED Signal - %d", timestamp.tv_sec,
 			 timestamp.tv_usec, mg_send.led_send);
 	fflush(FP);
-	n = write(client_sockfd,led,5);
+
+	n = read(client_sockfd,mg_receive.s_receive,40);
 	if(n == -1)
 	{
-		perror("Could not read: ");
+		perror("Error Reading/Writing ");
 		exit(0);
 	}
-
 	gettimeofday(&timestamp,NULL);		
-	read(client_sockfd,mg_receive.s_receive,40);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
 			timestamp.tv_usec, mg_receive.s_receive);
 	fflush(FP);
 	
+	n = read(client_sockfd,mg_receive.s_receive,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);		
-	read(client_sockfd,mg_receive.s_receive,40);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
 			timestamp.tv_usec, mg_receive.s_receive);	
 	fflush(FP);
 
+	n = read(client_sockfd,mg_receive.s_receive,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);		
-	read(client_sockfd,mg_receive.s_receive,40);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
 			timestamp.tv_usec, mg_receive.s_receive);	
 	fflush(FP);
 
+	n = read(client_sockfd,mg_receive.led_receive,5);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);		
-	read(client_sockfd,mg_receive.led_receive,5);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: LED Signal: %s", timestamp.tv_sec, 
 			timestamp.tv_usec, mg_receive.led_receive);	
 	fflush(FP);
 
+	n = write(client_sockfd,mg_send.s_send,20);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,
 			 timestamp.tv_usec, mg_send.s_send);
 	fflush(FP);
-	write(client_sockfd,mg_send.s_send,20);
 
 	strcpy(mg_send.s_send,"LED signal received");	
+	n = write(client_sockfd,mg_send.s_send,20);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,
 			 timestamp.tv_usec, mg_send.s_send);
 	fflush(FP);
-	write(client_sockfd,mg_send.s_send,20);
 
 	mg_send.led_send = 0;
 	sprintf(led,"%d",mg_send.led_send);
 	for(i=0;i<3;i++)
 	{
+		n = write(client_sockfd,led,5);	
+		if(n == -1)
+		{
+			perror("Error Reading/Writing ");
+			exit(0);
+		}
 		gettimeofday(&timestamp,NULL);
 		fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: LED Signal - %d", timestamp.tv_sec,
 			 timestamp.tv_usec, mg_send.led_send);
 		fflush(FP);
-		write(client_sockfd,led,5);	
 	}
 	
 	mg_send.led_send = 1;
 	sprintf(led,"%d",mg_send.led_send);
+	n = write(client_sockfd,led,5);
+	if(n == -1)
+	{	
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: LED Signal - %d", timestamp.tv_sec,
 			 timestamp.tv_usec, mg_send.led_send);
 	fflush(FP);
-	write(client_sockfd,led,5);
 
+	n = read(client_sockfd,mg_receive.s_receive,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);		
-	read(client_sockfd,mg_receive.s_receive,40);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
 			timestamp.tv_usec, mg_receive.s_receive);
 	fflush(FP);
 
 	for(i=0;i<3;i++)
 	{
+		n = read(client_sockfd,mg_receive.led_receive,5);
+		if(n == -1)
+		{
+			perror("Error Reading/Writing ");
+			exit(0);
+		}
 		gettimeofday(&timestamp,NULL);		
-		read(client_sockfd,mg_receive.led_receive,5);
 		fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: LED Signal: %s", timestamp.tv_sec, 
 				timestamp.tv_usec, mg_receive.led_receive);	
 		fflush(FP);
 	}
 
+	n = read(client_sockfd,mg_receive.led_receive,5);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);		
-	read(client_sockfd,mg_receive.led_receive,5);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: LED Signal: %s", timestamp.tv_sec, 
 			timestamp.tv_usec, mg_receive.led_receive);	
 	fflush(FP);
 
 	strcpy(mg_send.s_send,"LED signal received");	
+	n = write(client_sockfd,mg_send.s_send,20);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,
 			 timestamp.tv_usec, mg_send.s_send);
 	fflush(FP);
-	write(client_sockfd,mg_send.s_send,20);
 
 	strcpy(mg_send.s_send,"End of Communication");	
+	n = write(client_sockfd,mg_send.s_send,20);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Sending from Process 1: Message - %s", timestamp.tv_sec,
 			 timestamp.tv_usec, mg_send.s_send);
 	fflush(FP);
-	write(client_sockfd,mg_send.s_send,20);
 
+	n = read(client_sockfd,mg_receive.s_receive,40);
+	if(n == -1)
+	{
+		perror("Error Reading/Writing ");
+		exit(0);
+	}
 	gettimeofday(&timestamp,NULL);		
-	read(client_sockfd,mg_receive.s_receive,40);
 	fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message: %s", timestamp.tv_sec, 
 			timestamp.tv_usec, mg_receive.s_receive);
 	fflush(FP);
