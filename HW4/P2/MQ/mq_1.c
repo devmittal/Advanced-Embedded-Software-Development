@@ -188,11 +188,11 @@ int main()
 			exit(0);
 		}
 		gettimeofday(&timestamp,NULL);
-		if(n>2)
+		if(n>5)
 			fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: Message - %s", timestamp.tv_sec, 
 					timestamp.tv_usec, mg_receive.s_receive);
 		else
-			fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: LED SIgnal - %s", timestamp.tv_sec, 
+			fprintf(FP,"\n\n[%lu seconds %lu microseconds] Receiving at Process 1: LED Signal - %s", timestamp.tv_sec, 
 					timestamp.tv_usec, mg_receive.s_receive);
 		fflush(FP);
 	}
