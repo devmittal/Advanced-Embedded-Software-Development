@@ -7,10 +7,13 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include<sys/time.h>
+#include <sys/time.h>
 #include <string.h>
+#include <signal.h>
 
 #define FILENAME "logfile"
+int socketfd;
+FILE *FP;
 
 typedef struct
 {
@@ -24,6 +27,19 @@ typedef struct
 	char led_receive[5];
 }messages_receive; 
 
+void kill_signal_handler(int signum)
+{
+	struct timeval timestamp_kill;
+	if(signum == SIGINT)
+	{
+		gettimeofday(&timestamp_kill,NULL);
+		fprintf(FP,"\n\n[%lu seconds %lu microseconds] CTRL+C signal received", timestamp_kill.tv_sec,
+				 timestamp_kill.tv_usec);
+		fclose(FP);
+		close(socketfd);
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	struct sockaddr_in socket_str, cli_addr;
@@ -31,17 +47,23 @@ int main(int argc, char *argv[])
 	int client_sockfd;
 	char buffer[256];
 	int n, i;
-	int socketfd;
 	messages_send mg_send;
 	messages_receive mg_receive;
 	char led[5];
 	struct timeval timestamp;
+	struct sigaction act2;
+
+	memset(&act2,0,sizeof(struct sigaction));
+
+	act2.sa_handler = &kill_signal_handler;
+	if(sigaction(SIGINT,&act2,NULL) == -1)
+		perror("sigaction: ");
 
 	sprintf(mg_send.s_send,"From PID %d",getpid());
 	mg_send.led_send = 1;
 	sprintf(led,"%d",mg_send.led_send);
 
-	FILE *FP = fopen(FILENAME,"a");	
+	FP = fopen(FILENAME,"a");	
 	if(FP == NULL)
 	{
 		perror("File could not be created/opened: ");

@@ -7,10 +7,14 @@
 #include<sys/types.h>
 #include<unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 
 #define QUEUENAME_RECEIVE "/mymq1"
 #define QUEUENAME_SEND "/mymq2"
 #define FILENAME "logfile"
+mqd_t mq_client_send;
+mqd_t mq_client_receive;
+FILE *FP1;
 
 typedef struct
 {
@@ -24,29 +28,55 @@ typedef struct
 	//char led_receive2[5];
 }messages_receive2;
 
+void kill_signal_handler(int signum)
+{
+	struct timeval timestamp_kill;
+	if(signum == SIGINT)
+	{
+		gettimeofday(&timestamp_kill,NULL);
+		fprintf(FP1,"\n\n[%lu seconds %lu microseconds] CTRL+C signal received", timestamp_kill.tv_sec,
+				 timestamp_kill.tv_usec);
+		fclose(FP1);
+		if((mq_close(mq_client_send) || mq_close(mq_client_receive)) == -1)
+		{
+			perror("Closing file failed: ");
+			exit(0);
+		}
+
+		if((mq_unlink(QUEUENAME_RECEIVE) || mq_unlink(QUEUENAME_SEND)) == -1)
+		{
+			perror("Unlinking file failed: ");
+			exit(0);	
+		}
+	}
+}
+
 int main()
 {
 	int n,i;
 	char led[5];
-	mqd_t mq_client_send;
-	mqd_t mq_client_receive;
 	messages_send2 mg_send2;
 	messages_receive2 mg_receive2;
-	//struct mq_attr attr;
-	//char s[40];
 	struct timeval timestamp2;
+	struct sigaction act2;
+
+	memset(&act2,0,sizeof(struct sigaction));
+
+	act2.sa_handler = &kill_signal_handler;
+	if(sigaction(SIGINT,&act2,NULL) == -1)
+		perror("sigaction: ");
 
 	sprintf(mg_send2.s_send2,"From PID %d",getpid());
 	mg_send2.led_send2 = 1;
 
-	FILE *FP1 = fopen(FILENAME,"a");	
+	FP1 = fopen(FILENAME,"a");	
 	if(FP1 == NULL)
 	{
 		perror("File could not be created/opened: ");
 		exit(1);
 	}	
 	fprintf(FP1,"\n\nProcess 2 PID: %d",getpid());
-	fprintf(FP1,"\nUsing Named Pipes");
+	fprintf(FP1,"\nUsing Message Queues");
 	fflush(FP1);	
 
 	mq_client_receive = mq_open(QUEUENAME_RECEIVE, O_RDONLY | O_CREAT, 0666, NULL);
