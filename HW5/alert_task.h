@@ -9,7 +9,6 @@
 #ifndef ALERT_TASK_H_
 #define ALERT_TASK_H_
 
-#define SCALING_FACTOR  (0.0625)
 #define ULONG_MAX (0xFFFFFFFF)
 
 //*****************************************************************************
