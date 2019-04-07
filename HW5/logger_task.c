@@ -1,9 +1,11 @@
-/*
- * logger_task.c
- *
- *  Created on: Apr 6, 2019
- *      Author: Devansh
- */
+//*****************************************************************************
+// @file    -   temp_task.c
+// @brief   -   Creates logger task. Task blocks to receive messages from temperature
+//              logger, and alert task, and prints the messages to UART.
+// @author  -   Devansh Mittal
+// @date    -   04/07/2019
+// @version -   1.0
+//*****************************************************************************
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -31,18 +33,26 @@ static void logger(void *pvParameters)
     {
         xQueueReceive(xQueueTask1,&message,portMAX_DELAY);
 
+        /* message from temperature task */
         if(message.id == 0)
         {
             timestamp = Tick_to_MS(message.temperature.cur_time);
             UARTprintf("\n[%d ms]Temperature: %d.%d celsius", timestamp, (message.temperature.temp_c/1000),
                            (message.temperature.temp_c%1000));
         }
-        else
+
+        /* message from LED task */
+        else if(message.id == 1)
         {
             timestamp = Tick_to_MS(message.led.cur_time);
             UARTprintf("\n[%d ms]Name: %s. Toggle Count = %d", timestamp, (message.led.name),
                        (message.led.toggle_cnt));
         }
+
+        /* message from alert task */
+        else
+            UARTprintf("\nAlert: Temperature out of normal range: %d.%d celsius", (message.temperature.temp_c/1000),
+                       (message.temperature.temp_c%1000));
     }
 }
 
