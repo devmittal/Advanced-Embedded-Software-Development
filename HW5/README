@@ -4,7 +4,8 @@ Relevant Files:
 
 main.c - Calls functions to create 4 tasks - temperature, LED, logger and alert task. Configures UART
 
-temp_task.c -  Creates temperature task. Task reads raw temperature value from TMP102, converts to actual temperature and sends to the logger task via queue if less than the threshold, otherwise it notifies the alert task. Occurs every 1 second.
+temp_task.c -  Creates temperature task. Task reads raw temperature value from TMP102, converts to actual temperature and sends to the logger 
+               task via queue if less than the threshold, otherwise it notifies the alert task. Occurs every 1 second.
 temp_task.h - Function prototypes and macros for temp_task.c
 
 logger_task.c - Creates logger task. Task blocks to receive messages from temperature logger, and alert task, and prints the messages to UART.
