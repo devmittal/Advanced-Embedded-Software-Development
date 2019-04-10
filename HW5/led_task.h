@@ -9,7 +9,7 @@
 #ifndef __LED_TASK_H__
 #define __LED_TASK_H__
 
-#define LED_FREQ (100)
+#define LED_FREQ (50)
 
 //*****************************************************************************
 //
