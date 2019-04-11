@@ -17,37 +17,12 @@
 #include "led_task.h"
 #include "logger_task.h"
 
-void control_led(int status)
-{
-    TickType_t timestamp;
-    mesg_t led_cur;
-    static int toggle_count = 0;
-
-    timestamp = xTaskGetTickCount();
-    if(status == 1)
-    {
-        ROM_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_1, GPIO_PIN_1);
-        ROM_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, GPIO_PIN_0);
-    }
-    else
-    {
-        ROM_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_1, 0);
-        ROM_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, 0);
-    }
-
-    toggle_count++;
-
-    led_cur.id = 1;
-    led_cur.led.cur_time = timestamp;
-    led_cur.led.toggle_cnt = toggle_count;
-    led_cur.led.name = "Devansh";
-
-    xQueueSendToFront(xQueueTask1,&led_cur,portMAX_DELAY);
-}
-
 static void led(void *pvParameters)
 {
     TickType_t xLastTime;
+    TickType_t timestamp;
+    mesg_t led_cur;
+    static int toggle_count = 0;
 
     // Get the current tick count.
     xLastTime = xTaskGetTickCount();
@@ -55,15 +30,28 @@ static void led(void *pvParameters)
     // Loop forever.
     while(1)
     {
-        control_led(1); //Switch on LED
+        // Wait for the required amount of time.
+        vTaskDelayUntil(&xLastTime, pdMS_TO_TICKS(LED_FREQ));
+
+        ROM_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_1, GPIO_PIN_1);
+        ROM_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, GPIO_PIN_0); //Switch on LED
 
         // Wait for the required amount of time.
         vTaskDelayUntil(&xLastTime, pdMS_TO_TICKS(LED_FREQ));
 
-        control_led(0); //Switch off LED
+        ROM_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_1, 0);
+        ROM_GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, 0); //Switch off LED
 
-        // Wait for the required amount of time.
-        vTaskDelayUntil(&xLastTime, pdMS_TO_TICKS(LED_FREQ));
+        timestamp = xTaskGetTickCount();
+
+        toggle_count++;
+
+        led_cur.id = 1;
+        led_cur.led.cur_time = timestamp;
+        led_cur.led.toggle_cnt = toggle_count;
+        led_cur.led.name = "Devansh";
+
+        xQueueSendToFront(xQueueTask1,&led_cur,portMAX_DELAY);
     }
 }
 

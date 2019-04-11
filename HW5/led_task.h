@@ -19,12 +19,4 @@
 
 int led_task_init(void);
 
-//*****************************************************************************
-// @brief: Toggle LED based on parameter. Send toggle count, name and timestamp
-//         to logger task via queue.
-// @param: 1: LED on/off
-// @return: void
-//*****************************************************************************
-void control_led(int status);
-
 #endif // __LED_TASK_H__
